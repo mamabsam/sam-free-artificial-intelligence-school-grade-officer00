@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>محمد سام</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; overflow:hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Google Sans', Tahoma, sans-serif;
+  background: linear-gradient(to bottom, #000 0%, #000 50%, #071223 78%, #0a1c3a 100%);
+  color: #fff; display: flex; flex-direction: column;
+  height: 100vh; position: relative; overflow: hidden;
+}
+
+/* ============ هدر ============ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; flex-shrink: 0; z-index: 10;
+}
+.header-left { display: flex; align-items: center; gap: 8px; }
+.menu-icon {
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border-radius: 50%; transition: background .2s; position: relative;
+}
+.menu-icon:hover { background: rgba(255,255,255,.08); }
+.menu-icon::before {
+  content:''; position:absolute; top:2px; right:4px;
+  width:6px; height:6px; border-radius:50%; background:#4285f4;
+}
+.menu-icon svg { width:22px; height:22px; }
+.model-name {
+  font-size: 1.05rem; font-weight: 400; color:#e3e3e3;
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; padding: 6px 8px; border-radius: 8px;
+}
+.model-name:hover { background: rgba(255,255,255,.08); }
+.model-name svg { width:14px; height:14px; opacity:.8; }
+.header-right { display:flex; align-items:center; gap:12px; }
+.compose-icon {
+  width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border-radius: 50%; position: relative;
+}
+.compose-icon:hover { background: rgba(255,255,255,.08); }
+.compose-icon::before {
+  content:''; position:absolute; inset:2px;
+  border-radius:50%; border:1.5px dashed #5f6368;
+}
+.compose-icon svg { width:14px; height:14px; color:#e3e3e3; }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg,#4285f4,#9b72cb,#d96570);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color:#fff; cursor: pointer;
+}
+.header-title {
+  font-size: .85rem; color: #9aa0a6; font-weight: 500;
+  position: absolute; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+}
+@media (max-width: 500px) {
+  .header-title { display: none; }
+}
+
+/* ============ محتوای وسط ============ */
+.center-content {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px; z-index: 1;
+}
+.center-content.hidden { display: none; }
+.gemini-logo {
+  width: 90px; height: 90px; margin-bottom: 40px;
+  animation: logoFloat 4s ease-in-out infinite;
+}
+@keyframes logoFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.03); }
+}
+.welcome-text {
+  font-size: 1.75rem; font-weight: 400; color:#fff;
+  text-align: center; line-height: 1.4;
+  letter-spacing: -0.5px; animation: fadeInUp .8s ease;
+}
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(20px); }
+  to { opacity:1; transform: translateY(0); }
+}
+.welcome-sub {
+  font-size: .85rem; color: #5f6368; margin-top: 12px;
+}
+
+/* ============ ناحیه چت ============ */
+.chat-area {
+  flex: 1; overflow-y: auto; padding: 0 16px 140px;
+  display: none; scroll-behavior: smooth;
+}
+.chat-area.active { display: block; }
+.chat-area::-webkit-scrollbar { width: 4px; }
+.chat-area::-webkit-scrollbar-thumb { background:#333; border-radius:4px; }
+
+.message {
+  display: flex; gap: 10px; margin-bottom: 18px;
+  animation: msgIn .3s ease; max-width: 100%;
+}
+@keyframes msgIn {
+  from { opacity:0; transform: translateY(10px); }
+  to { opacity:1; transform: translateY(0); }
+}
+.message.user { flex-direction: row-reverse; }
+.message-avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+}
+.message-avatar.ai {
+  background: linear-gradient(135deg,#4285f4,#9b72cb); color:#fff;
+}
+.message-avatar.user-av { background:#444746; color:#fff; }
+
+.message-bubble {
+  background: #1e1f20; border-radius: 18px;
+  padding: 12px 16px; max-width: 82%;
+  font-size: .93rem; line-height: 1.75; color:#e3e3e3;
+  word-wrap: break-word; white-space: pre-wrap;
+}
+.message.user .message-bubble {
+  background:#004a77; color:#fff; border-bottom-right-radius:4px;
+}
+.message.ai .message-bubble { border-bottom-left-radius:4px; }
+.message-bubble img, .message-bubble video {
+  max-width: 100%; border-radius: 12px;
+  margin-top: 10px; display: block;
+}
+.message-bubble audio {
+  width: 100%; margin-top: 10px; border-radius: 8px;
+}
+.message-bubble pre {
+  background: #0d0d0d; padding: 12px; border-radius: 8px;
+  margin: 8px 0; overflow-x: auto; direction: ltr; text-align: left;
+  font-family: monospace; font-size: .82rem; line-height: 1.5;
+}
+.message-bubble code {
+  background: #2a2b2d; padding: 2px 6px; border-radius: 4px;
+  font-family: monospace; font-size: .85em; direction: ltr;
+  display: inline-block;
+}
+
+/* ============ تایپینگ ============ */
+.typing-indicator { display: flex; gap: 4px; padding: 4px 0; }
+.typing-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #888;
+  animation: typingBounce 1.4s infinite ease-in-out;
+}
+.typing-dot:nth-child(2) { animation-delay:.2s; }
+.typing-dot:nth-child(3) { animation-delay:.4s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform: translateY(0); opacity:.4; }
+  30% { transform: translateY(-5px); opacity:1; }
+}
+
+/* ============ نوار ورودی ============ */
+.input-bar-container {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 10px 14px 22px;
+  background: linear-gradient(to top, #0a1c3a 0%, #071223 50%, transparent 100%);
+  z-index: 50;
+}
+.input-bar {
+  display: flex; align-items: center; background: #1e1f20;
+  border-radius: 999px; padding: 6px 8px; gap: 6px;
+  min-height: 52px; box-shadow: 0 2px 12px rgba(0,0,0,.4);
+}
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none;
+  background: transparent; color:#e3e3e3; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background .2s; font-family: inherit;
+}
+.icon-btn:hover { background: rgba(255,255,255,.08); }
+.icon-btn svg { width: 20px; height: 20px; }
+.chat-input {
+  flex: 1; background: transparent; border: none;
+  color: #e3e3e3; font-size: .95rem; font-family: inherit;
+  outline: none; padding: 8px 4px; min-width: 0; direction: rtl;
+}
+.chat-input::placeholder { color:#8e918f; }
+.send-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none;
+  background:#2b2d2f; color:#5f6368; cursor: not-allowed;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s; font-family: inherit;
+}
+.send-btn.active { background:#e3e3e3; color:#000; cursor: pointer; }
+.send-btn svg { width:20px; height:20px; }
+.icon-btn.recording {
+  background:#ff4444; color:#fff; animation: recPulse 1s infinite;
+}
+@keyframes recPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,68,68,.6); }
+  50% { box-shadow: 0 0 0 10px rgba(255,68,68,0); }
+}
+
+/* ============ توست ============ */
+.toast {
+  position: fixed; bottom: 90px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #2b2d2f; color:#e3e3e3;
+  padding: 10px 20px; border-radius: 20px;
+  font-size: .82rem; opacity: 0; transition: all .3s;
+  pointer-events: none; z-index: 200; max-width: 90%;
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ============ لودر ============ */
+.loader-overlay {
+  position: fixed; inset: 0; background: #000;
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 999;
+}
+.loader-overlay.show { display: flex; }
+.loader-logo {
+  width: 80px; height: 80px; margin-bottom: 24px;
+  animation: logoFloat 2s ease-in-out infinite;
+}
+.loader-text {
+  font-size: .95rem; color:#9aa0a6; margin-bottom: 16px;
+}
+.loader-model-name {
+  font-size: .8rem; color:#5f6368; height: 20px;
+  transition: opacity .3s; max-width: 90%; text-align: center;
+}
+.loader-progress {
+  width: 220px; height: 3px; background:#1e1f20;
+  border-radius: 3px; margin-top: 20px; overflow: hidden;
+}
+.loader-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg,#4285f4,#9b72cb,#d96570);
+  width: 0%; transition: width .3s; border-radius: 3px;
+}
+
+/* ============ منوی ابزار ============ */
+.tools-menu {
+  position: fixed; bottom: 90px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #2b2d2f; border-radius: 20px;
+  padding: 8px; display: none; z-index: 150;
+  box-shadow: 0 8px 30px rgba(0,0,0,.5);
+  min-width: 200px;
+}
+.tools-menu.show { display: block; }
+.tool-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 12px;
+  cursor: pointer; font-size: .85rem; color: #e3e3e3;
+  transition: background .2s;
+}
+.tool-item:hover { background: rgba(255,255,255,.08); }
+.tool-item svg { width: 18px; height: 18px; }
+
+@media (max-width: 400px) {
+  .welcome-text { font-size: 1.45rem; }
+  .gemini-logo { width: 75px; height: 75px; margin-bottom: 32px; }
+  .message-bubble { font-size: .88rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ هدر ============ -->
+<header class="header">
+  <div class="header-left">
+    <div class="menu-icon" onclick="newChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#e3e3e3" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </div>
+    <div class="model-name">
+      <span>محمد سام</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#e3e3e3" stroke-width="2">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </div>
+  </div>
+  <div class="header-title">مدیریت و مسئولیت: ملک زاده</div>
+  <div class="header-right">
+    <div class="compose-icon" onclick="newChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#e3e3e3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+    </div>
+    <div class="avatar" onclick="showToast('مدیریت: ملک زاده')">م</div>
+  </div>
+</header>
+
+<!-- ============ محتوای وسط ============ -->
+<div class="center-content" id="centerContent">
+  <svg class="gemini-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="gemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#4285f4"/>
+        <stop offset="30%" stop-color="#9b72cb"/>
+        <stop offset="60%" stop-color="#d96570"/>
+        <stop offset="100%" stop-color="#f2a600"/>
+      </linearGradient>
+    </defs>
+    <path d="M50 5 C52 30, 70 48, 95 50 C70 52, 52 70, 50 95 C48 70, 30 52, 5 50 C30 48, 48 30, 50 5 Z" fill="url(#gemGrad)"/>
+  </svg>
+  <div class="welcome-text">سلام من محمد سام هستم</div>
+  <div class="welcome-sub">مدیریت و مسئولیت: ملک زاده</div>
+</div>
+
+<!-- ============ چت ============ -->
+<div class="chat-area" id="chatArea"></div>
+
+<!-- ============ منوی ابزار ============ -->
+<div class="tools-menu" id="toolsMenu">
+  <div class="tool-item" onclick="selectTool('code')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    <span>کدنویسی</span>
+  </div>
+  <div class="tool-item" onclick="selectTool('image')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#00d97e" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    <span>تولید عکس</span>
+  </div>
+  <div class="tool-item" onclick="selectTool('music')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#f2a600" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    <span>تولید آهنگ</span>
+  </div>
+  <div class="tool-item" onclick="selectTool('video')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#d96570" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+    <span>تولید فیلم</span>
+  </div>
+  <div class="tool-item" onclick="selectTool('upload')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#a8c7fa" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <span>آپلود فایل</span>
+  </div>
+</div>
+
+<!-- ============ نوار ورودی ============ -->
+<div class="input-bar-container">
+  <div class="input-bar">
+    <button class="icon-btn" onclick="toggleTools()" title="ابزارها">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    </button>
+    <input type="text" class="chat-input" id="chatInput" placeholder="Ask Mohammad Sam..." autocomplete="off">
+    <button class="icon-btn" id="micBtn" onclick="toggleVoice()" title="میکروفون">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+        <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+    </button>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="ارسال">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="19" x2="12" y2="5"/>
+        <polyline points="5 12 12 5 19 12"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============ توست ============ -->
+<div class="toast" id="toast"></div>
+
+<!-- ============ لودر ============ -->
+<div class="loader-overlay" id="loaderOverlay">
+  <svg class="loader-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="gemGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#4285f4"/>
+        <stop offset="30%" stop-color="#9b72cb"/>
+        <stop offset="60%" stop-color="#d96570"/>
+        <stop offset="100%" stop-color="#f2a600"/>
+      </linearGradient>
+    </defs>
+    <path d="M50 5 C52 30, 70 48, 95 50 C70 52, 52 70, 50 95 C48 70, 30 52, 5 50 C30 48, 48 30, 50 5 Z" fill="url(#gemGrad2)"/>
+  </svg>
+  <div class="loader-text" id="loaderText">در حال پردازش...</div>
+  <div class="loader-model-name" id="loaderModelName">آماده‌سازی...</div>
+  <div class="loader-progress">
+    <div class="loader-progress-bar" id="loaderProgressBar"></div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   متغیرها
+   ========================================================== */
+let isFirstMessage = true;
+let isRecording = false;
+let recognition = null;
+let currentTool = null;
+let uploadedFile = null;
+let uploadedFileType = null;
+
+const chatArea = document.getElementById('chatArea');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const centerContent = document.getElementById('centerContent');
+const loaderOverlay = document.getElementById('loaderOverlay');
+const loaderText = document.getElementById('loaderText');
+const loaderModelName = document.getElementById('loaderModelName');
+const loaderProgressBar = document.getElementById('loaderProgressBar');
+const toolsMenu = document.getElementById('toolsMenu');
+
+/* ==========================================================
+   مدل‌های موجود در Pollinations.ai (قابل دسترس در ایران)
+   ========================================================== */
+const TEXT_MODELS = [
+  'openai', 'openai-fast', 'openai-large', 'openai-reasoning',
+  'mistral', 'llama', 'qwen-coder', 'deepseek', 'gemini', 'gemini-fast',
+  'kimi', 'grok', 'claude-hybridspace', 'searchgpt'
+];
+
+const IMAGE_MODELS = ['flux', 'turbo', 'kontext', 'nanobanana', 'seedream'];
+const VIDEO_MODELS = ['veo', 'seedance'];
+const AUDIO_VOICES = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+
+/* ==========================================================
+   توابع کمکی
+   ========================================================== */
+function showToast(msg, duration = 2500) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function scrollToBottom() {
+  setTimeout(() => { chatArea.scrollTop = chatArea.scrollHeight; }, 50);
+}
+
+function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+/* ==========================================================
+   ورودی
+   ========================================================== */
+chatInput.addEventListener('input', function() {
+  sendBtn.classList.toggle('active', !!this.value.trim());
+});
+
+chatInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim()) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+/* ==========================================================
+   گفتگوی جدید
+   ========================================================== */
+function newChat() {
+  chatArea.innerHTML = '';
+  chatArea.classList.remove('active');
+  centerContent.classList.remove('hidden');
+  centerContent.style.display = 'flex';
+  isFirstMessage = true;
+  currentTool = null;
+  uploadedFile = null;
+  uploadedFileType = null;
+  showToast('گفتگوی جدید شروع شد ✨');
+}
+
+/* ==========================================================
+   منوی ابزار
+   ========================================================== */
+function toggleTools() {
+  toolsMenu.classList.toggle('show');
+}
+
+function selectTool(tool) {
+  currentTool = tool;
+  toolsMenu.classList.remove('show');
+  const names = { code:'کدنویسی', image:'تولید عکس', music:'تولید آهنگ', video:'تولید فیلم', upload:'آپلود فایل' };
+  showToast('حالت: ' + names[tool] + ' — سوال خود را بنویسید');
+  if (tool === 'upload') {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*,audio/*,video/*,.pdf,.txt,.doc,.docx';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      uploadedFile = file;
+      uploadedFileType = file.type.split('/')[0];
+      showToast('✅ فایل آپلود شد: ' + file.name);
+    };
+    input.click();
+  }
+}
+
+/* ==========================================================
+   ارسال پیام
+   ========================================================== */
+async function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text && !uploadedFile) return;
+
+  if (isFirstMessage) {
+    centerContent.classList.add('hidden');
+    centerContent.style.display = 'none';
+    chatArea.classList.add('active');
+    isFirstMessage = false;
+  }
+
+  let userText = text;
+  if (uploadedFile) {
+    userText = `[فایل: ${uploadedFile.name}] ${text}`;
+  }
+
+  addMessage('user', userText);
+  chatInput.value = '';
+  sendBtn.classList.remove('active');
+
+  // تشخیص نوع درخواست
+  const hasFile = !!uploadedFile;
+  const fileType = uploadedFileType;
+  const isImageReq = /(عکس|تصویر|بکش|نقاشی|draw|image|picture)/i.test(text) && !hasFile;
+  const isMusicReq = /(آهنگ|موسیقی|صدا|music|song|audio)/i.test(text) && !hasFile;
+  const isVideoReq = /(فیلم|ویدیو|video|movie)/i.test(text) && !hasFile;
+  const isCodeReq = /(کد|برنامه|اسکریپت|code|program|function|script)/i.test(text) || currentTool === 'code';
+
+  try {
+    let result;
+    if (hasFile && fileType === 'image') {
+      result = await analyzeImage(uploadedFile, text);
+    } else if (hasFile && fileType === 'audio') {
+      result = await transcribeAudio(uploadedFile);
+    } else if (isImageReq) {
+      result = await generateImage(text);
+    } else if (isMusicReq) {
+      result = await generateMusic(text);
+    } else if (isVideoReq) {
+      result = await generateVideo(text);
+    } else if (isCodeReq) {
+      result = await generateCode(text);
+    } else {
+      result = await chatText(text);
+    }
+    addMessage('ai', result.text, result.type, result.url);
+    uploadedFile = null;
+    uploadedFileType = null;
+    currentTool = null;
+  } catch (err) {
+    addMessage('ai', `❌ خطا: ${err.message}`);
+  }
+}
+
+/* ==========================================================
+   پیام‌ها
+   ========================================================== */
+function addMessage(role, text, type = null, url = null) {
+  const msg = document.createElement('div');
+  msg.className = `message ${role}`;
+  const avatarClass = role === 'user' ? 'user-av' : 'ai';
+
+  let content = escapeHtml(text);
+  content = content.replace(/```(\w+)?\n?([\s\S]*?)```/g, '<pre>$2</pre>');
+  content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  let mediaHtml = '';
+  if (type === 'image' && url) mediaHtml = `<img src="${url}" alt="تصویر" loading="lazy">`;
+  if (type === 'audio' && url) mediaHtml = `<audio controls src="${url}"></audio>`;
+  if (type === 'video' && url) mediaHtml = `<video controls src="${url}" style="max-width:100%"></video>`;
+
+  msg.innerHTML = `
+    <div class="message-avatar ${avatarClass}">م</div>
+    <div class="message-bubble">${content}${mediaHtml}</div>
+  `;
+  chatArea.appendChild(msg);
+  scrollToBottom();
+}
+
+function addTypingIndicator(label = 'در حال پردازش...') {
+  const msg = document.createElement('div');
+  msg.className = 'message ai';
+  msg.id = 'typingMsg';
+  msg.innerHTML = `
+    <div class="message-avatar ai">م</div>
+    <div class="message-bubble">
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+  `;
+  chatArea.appendChild(msg);
+  scrollToBottom();
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById('typingMsg');
+  if (el) el.remove();
+}
+
+/* ==========================================================
+   لودر
+   ========================================================== */
+function showLoader(text, modelName) {
+  return new Promise((resolve) => {
+    loaderOverlay.classList.add('show');
+    loaderText.textContent = text;
+    loaderModelName.textContent = modelName;
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 8 + 3;
+      if (progress > 95) progress = 95;
+      loaderProgressBar.style.width = progress + '%';
+      if (progress >= 95) {
+        clearInterval(interval);
+        setTimeout(() => {
+          loaderProgressBar.style.width = '100%';
+          setTimeout(() => {
+            loaderOverlay.classList.remove('show');
+            loaderProgressBar.style.width = '0%';
+            resolve();
+          }, 300);
+        }, 400);
+      }
+    }, 150);
+  });
+}
+
+/* ==========================================================
+   ۱. چت متنی — با ۱۵ مدل Pollinations
+   ========================================================== */
+async function chatText(userText) {
+  addTypingIndicator();
+  const model = pickRandom(TEXT_MODELS);
+  await showLoader('در حال دریافت پاسخ...', `مدل: ${model}`);
+
+  const systemPrompt = `تو «محمد سام» هستی — یک دستیار هوشمند فارسی‌زبان و خودمونی.
+قوانین:
+- مثل یه رفیق باهوش و صمیمی حرف بزن
+- فارسی روان و محاوره‌ای بنویس
+- هر بار جواب متفاوت بده
+- از ایموجی بجا استفاده کن
+- جواب‌ها دقیق و کامل باشه`;
+
+  try {
+    const res = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userText }
+        ],
+        temperature: 0.95,
+        max_tokens: 1500
+      })
+    });
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || 'پاسخی دریافت نشد';
+    removeTypingIndicator();
+    return { text: reply, type: null, url: null };
+  } catch (e) {
+    removeTypingIndicator();
+    throw new Error(e.message || 'خطا در ارتباط');
+  }
+}
+
+/* ==========================================================
+   ۲. تولید کد
+   ========================================================== */
+async function generateCode(userText) {
+  addTypingIndicator();
+  await showLoader('در حال نوشتن کد...', 'مدل: qwen-coder');
+
+  const systemPrompt = `تو «محمد سام» هستی — یک برنامه‌نویس حرفه‌ای.
+قوانین:
+- کد کامل و قابل اجرا بنویس
+- از بلوک‌های کد (markdown) استفاده کن
+- توضیح مختصر بده
+- بهترین زبان رو انتخاب کن`;
+
+  try {
+    const res = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'qwen-coder',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userText }
+        ],
+        temperature: 0.7,
+        max_tokens: 3000
+      })
+    });
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || 'کدی تولید نشد';
+    removeTypingIndicator();
+    return { text: reply, type: null, url: null };
+  } catch (e) {
+    removeTypingIndicator();
+    throw new Error(e.message || 'خطا در تولید کد');
+  }
+}
+
+/* ==========================================================
+   ۳. تولید عکس — Pollinations Image API
+   ========================================================== */
+async function generateImage(userText) {
+  addTypingIndicator();
+  await showLoader('در حال تولید عکس...', 'مدل: Flux');
+
+  let prompt = userText
+    .replace(/(عکس|تصویر|بکش|نقاشی|draw|image|picture|of|از|یک|یه)/gi, '')
+    .trim();
+  if (!prompt || prompt.length < 2) prompt = 'یک منظره زیبا';
+
+  const model = pickRandom(IMAGE_MODELS);
+  const seed = Math.floor(Math.random() * 1000000);
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${seed}&nologo=true&model=${model}`;
+
+  // پیش‌بارگذاری
+  await new Promise((resolve) => {
+    const img = new Image();
+    img.onload = resolve;
+    img.onerror = resolve;
+    img.src = url;
+  });
+
+  removeTypingIndicator();
+  return { text: `🎨 بفرما رفیق! اینم عکست:\n«${prompt}»`, type: 'image', url };
+}
+
+/* ==========================================================
+   ۴. تولید آهنگ — Pollinations Audio API
+   ========================================================== */
+async function generateMusic(userText) {
+  addTypingIndicator();
+  await showLoader('در حال ساخت آهنگ...', 'مدل: openai-audio');
+
+  const voice = pickRandom(AUDIO_VOICES);
+  const prompt = `یک آهنگ کوتاه درباره: ${userText}`;
+  const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai-audio&voice=${voice}`;
+
+  // پیش‌بارگذاری
+  await new Promise((resolve) => {
+    const audio = new Audio();
+    audio.oncanplaythrough = resolve;
+    audio.onerror = resolve;
+    audio.src = url;
+    setTimeout(resolve, 5000);
+  });
+
+  removeTypingIndicator();
+  return { text: `🎵 بفرما رفیق! اینم آهنگت (صدای ${voice}):`, type: 'audio', url };
+}
+
+/* ==========================================================
+   ۵. تولید فیلم — Pollinations Video API
+   ========================================================== */
+async function generateVideo(userText) {
+  addTypingIndicator();
+  await showLoader('در حال ساخت فیلم...', 'مدل: Veo / Seedance');
+
+  const model = pickRandom(VIDEO_MODELS);
+  const prompt = userText
+    .replace(/(فیلم|ویدیو|video|movie|بساز|بکن)/gi, '')
+    .trim() || 'یک صحنه سینمایی';
+
+  const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=${model}`;
+
+  await new Promise(resolve => setTimeout(resolve, 3000));
+
+  removeTypingIndicator();
+  return { text: `🎬 بفرما رفیق! اینم فیلمت:\n«${prompt}»`, type: 'video', url };
+}
+
+/* ==========================================================
+   ۶. تحلیل عکس — Vision API
+   ========================================================== */
+async function analyzeImage(file, question) {
+  addTypingIndicator();
+  await showLoader('در حال تحلیل عکس...', 'مدل: openai (Vision)');
+
+  const base64 = await fileToBase64(file);
+  const q = question || 'این عکس رو توصیف کن';
+
+  try {
+    const res = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'openai',
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'text', text: q },
+            { type: 'image_url', image_url: { url: `data:${file.type};base64,${base64}` } }
+          ]
+        }],
+        max_tokens: 800
+      })
+    });
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || 'پاسخی دریافت نشد';
+    removeTypingIndicator();
+    return { text: `🖼️ تحلیل عکس:\n${reply}`, type: null, url: null };
+  } catch (e) {
+    removeTypingIndicator();
+    throw new Error(e.message || 'خطا در تحلیل عکس');
+  }
+}
+
+/* ==========================================================
+   ۷. تبدیل گفتار به متن — Audio API
+   ========================================================== */
+async function transcribeAudio(file) {
+  addTypingIndicator();
+  await showLoader('در حال تبدیل صدا به متن...', 'مدل: openai-audio');
+
+  const base64 = await fileToBase64(file);
+
+  try {
+    const res = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'openai-audio',
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'text', text: 'این فایل صوتی رو به متن تبدیل کن:' },
+            { type: 'input_audio', input_audio: { data: base64, format: file.type.split('/')[1] || 'wav' } }
+          ]
+        }]
+      })
+    });
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || 'متنی استخراج نشد';
+    removeTypingIndicator();
+    return { text: `🎤 متن استخراج شده:\n${reply}`, type: null, url: null };
+  } catch (e) {
+    removeTypingIndicator();
+    throw new Error(e.message || 'خطا در تبدیل صدا');
+  }
+}
+
+/* ==========================================================
+   توابع کمکی
+   ========================================================== */
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ==========================================================
+   ورودی صوتی
+   ========================================================== */
+function toggleVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('مرورگر شما پشتیبانی نمی‌کند. Chrome استفاده کنید.'); return; }
+  const micBtn = document.getElementById('micBtn');
+  if (isRecording) { recognition.stop(); return; }
+
+  recognition = new SR();
+  recognition.lang = 'fa-IR';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isRecording = true;
+    micBtn.classList.add('recording');
+    showToast('🎤 در حال ضبط...');
+  };
+  recognition.onend = () => {
+    isRecording = false;
+    micBtn.classList.remove('recording');
+  };
+  recognition.onresult = (e) => {
+    chatInput.value = e.results[0][0].transcript;
+    sendBtn.classList.add('active');
+    setTimeout(() => sendMessage(), 400);
+  };
+  recognition.onerror = (e) => {
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    if (e.error === 'not-allowed') showToast('دسترسی به میکروفون رد شد');
+  };
+  recognition.start();
+}
+
+/* ==========================================================
+   راه‌اندازی
+   ========================================================== */
+window.addEventListener('DOMContentLoaded', () => {
+  chatInput.focus();
+  console.log('✅ محمد سام آماده است — بدون API Key و VPN');
+  console.log('📌 مدل‌ها:', TEXT_MODELS.join(', '));
+  console.log('📌 تصویر:', IMAGE_MODELS.join(', '));
+  console.log('📌 ویدیو:', VIDEO_MODELS.join(', '));
+});
+
+// بستن منوی ابزار با کلیک بیرون
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.tools-menu') && !e.target.closest('.icon-btn')) {
+    toolsMenu.classList.remove('show');
+  }
+});
+</script>
+</body>
+</html>
